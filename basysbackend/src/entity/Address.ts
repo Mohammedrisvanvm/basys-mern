@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { ProviderPayerDetails } from "./Provider";
+import { ENTITY } from "./Entity";
 
 // Define the entity for Provider/Payer Details
 @Entity()
@@ -37,9 +37,6 @@ export class Address {
   @Column({ nullable: true })
   billingCountry: string;
 
-  @ManyToOne(
-    () => ProviderPayerDetails,
-    (ProviderPayerDetails) => ProviderPayerDetails.addresses
-  ) // Define Many-to-One relationship with User entity
-  user: ProviderPayerDetails;
+  @ManyToOne(() => ENTITY, (ENTITY) => ENTITY.addresses) // Define Many-to-One relationship with User entity
+  user: ENTITY;
 }

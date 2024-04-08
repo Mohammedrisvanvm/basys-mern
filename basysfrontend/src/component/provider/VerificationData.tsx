@@ -7,8 +7,9 @@ import React, {
   SetStateAction,
   Dispatch,
 } from "react";
+import { axiosBase } from "../../api/axios";
 
-const VerificationData = () => {
+const VerificationData = ({setHomePage}:{setHomePage:Dispatch<React.SetStateAction<string>>}) => {
   const [frontLicense, setFrontLicense] = useState<File | null>(null);
   const [backLicense, setBackLicense] = useState<File | null>(null);
   const [frontInsurance, setFrontInsurance] = useState<File | null>(null);
@@ -16,6 +17,12 @@ const VerificationData = () => {
   const [imageData, setImageData] = useState<File[]>([]);
   const [Error, setError] = useState<string | null>(null);
 
+  useEffect(()=>{
+    axiosBase.get('/entity/get').then((res)=>{
+      console.log(res);
+      
+    })
+  })
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

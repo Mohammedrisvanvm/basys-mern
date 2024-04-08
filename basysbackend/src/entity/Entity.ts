@@ -12,7 +12,7 @@ import { Document } from "./Document";
 
 // Define the entity for Provider/Payer Details
 @Entity()
-export class ProviderPayerDetails {
+export class ENTITY {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,11 +22,20 @@ export class ProviderPayerDetails {
   @Column()
   personName: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
   phoneNumber: string;
+
+  @Column()
+  age: string;
+
+  @Column()
+  gender: string;
+
+  @Column()
+  password: string;
 
   @OneToMany(() => Address, (address) => address.user, { cascade: true }) // Define One-to-Many relationship with Address entity
   addresses: Address[];
@@ -34,13 +43,13 @@ export class ProviderPayerDetails {
   @OneToMany(() => Document, (Document) => Document.user, { cascade: true }) // Define One-to-Many relationship with Document entity
   Documentes: Document[];
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   taxID: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   providerLicenseNumber: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   NPI: string;
 
   @Column({ nullable: true })
@@ -51,19 +60,7 @@ export class ProviderPayerDetails {
 
   @Column({ nullable: true })
   providerNetworksCovered: string;
+
+  @Column({ nullable: true })
+  nextStep: string; 
 }
-
-// @Column({ nullable: true })
-//   billingStreet: string;
-
-//   @Column({ nullable: true })
-//   billingCity: string;
-
-//   @Column({ nullable: true })
-//   billingState: string;
-
-//   @Column({ nullable: true })
-//   billingPostalCode: string;
-
-//   @Column({ nullable: true })
-//   billingCountry: string;

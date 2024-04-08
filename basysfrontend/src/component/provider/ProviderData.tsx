@@ -1,36 +1,121 @@
-import React, { useState } from "react";
+import React, {
+  ChangeEvent,
+  Dispatch,
+  HtmlHTMLAttributes,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosBase } from "../../api/axios";
 
-const ProviderData = () => {
+const ProviderData = ({
+  setHomePage,
+}: {
+  setHomePage: Dispatch<React.SetStateAction<string>>;
+}) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [age, setAge] = useState<string>("");
+  const [personName, setPersonName] = useState<string>("");
+  const [number, setNumber] = useState<string>("");
+  const [licenceNumber, setLicenceNumber] = useState<string>("");
+  const [taxId, setTaxId] = useState<string>("");
+  const [npi, setNpi] = useState<string>("");
   const [entity, setSelectedValue] = useState<string>("provider");
+  const [gender, setGender] = useState<string>("nil");
+  const [specialty, setSpecialty] = useState<string>("");
+  const [payerPlan, setPayerPlan] = useState("");
+  const [network, setNetwork] = useState("");
+  const specialtydata = [
+    "Cardiology",
+    "Dermatology",
+    "Endocrinology",
+    "Gastroenterology",
+    "Hematology",
+    // Add more specialties as needed
+  ];
+  // State to manage the visibility of the dropdown menu
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // Function to toggle the dropdown menu
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   // Function to handle radio button change
   const handleRadioChange = (value: string) => {
     setSelectedValue(value);
   };
+  const handleRadioGenderChange = (value: string) => {
+    setGender(value);
+  };
   console.log(entity);
 
   const Navigate = useNavigate();
   const handleSubmit = async () => {
-    if (!email || !password) {
-      return;
+    try {
+      
+  
+    if (
+      !email ||
+      !password ||
+      !personName ||
+      !age ||
+      !gender ||
+      !entity ||
+      !number
+    ) {
+      console.log(email, password, age, personName);
+      console.log(gender, entity, number);
     }
-    console.log(email, password);
-    axiosBase.post("/admin/signin", { email, password }).then((res: any) => {
-      console.log(res);
-      if (res.status == 200) {
-        localStorage.setItem("token", res.data.token);
-        console.log(res.data.user);
-        Navigate("/admin");
-      } else {
-        console.log(res.response.data.message);
+    if (entity === "provider") {
+      setTaxId("");
+      setNetwork("");
+      if (!licenceNumber || !npi || !specialty || !payerPlan) {
+        console.log(licenceNumber, npi, specialty);
+        return;
       }
-    });
+    } else if (entity === "payer") {
+      setLicenceNumber("");
+      setNpi("");
+      setSpecialty("");
+      setPayerPlan("");
+      if (!taxId || !network) {
+        console.log(taxId, network);
+        return;
+      }
+    }
+
+    axiosBase
+      .post("/entity/create", {
+        email,
+        password,
+        age,
+        personName,
+        gender,
+        entity,
+        number,
+        licenceNumber,
+        npi,
+        taxId,
+        specialty,
+        payerPlan,
+        network,
+      })
+      .then((res: any) => {
+        console.log(res);
+        if (res.status == 200) {
+          localStorage.setItem("entityToken", res.data.entityToken);
+          setHomePage(res.data.nextStep);
+        } else {
+          console.log(res.response.data.message);
+        }
+      });
 
     // axios
+  } catch (error) {
+     console.log(error);
+      
+  }
   };
   return (
     <>
@@ -38,7 +123,8 @@ const ProviderData = () => {
 
       <div className="container flex justify-around p-6">
         <div className="w-96">
-          <div>
+          <div className="mb-3">
+            <label className="mb-2 block text-xs font-semibold">Entity</label>
             <label className="inline-flex items-center">
               <input
                 type="radio"
@@ -60,6 +146,19 @@ const ProviderData = () => {
               <span className="ml-2">payer</span>
             </label>
           </div>
+
+          <div className="mb-3">
+            <label className="mb-2 block text-xs font-semibold">Email</label>
+            <input
+              id="name"
+              type="string"
+              onChange={(e) => setPersonName(e.target.value)}
+              value={personName}
+              placeholder="Enter your name"
+              className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
+            />
+          </div>
+
           <div className="mb-3">
             <label className="mb-2 block text-xs font-semibold">Email</label>
             <input
@@ -71,84 +170,170 @@ const ProviderData = () => {
               className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
             />
           </div>
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8"></div>
-          <div className="grid md:grid-cols-2 md:gap-6">
-            <div className="relative z-0 w-full mb-6 group">
+
+          <div className="mb-3">
+            <label className="mb-2 block text-xs font-semibold">
+              Phone Number
+            </label>
+            <input
+              id="number"
+              type="string"
+              onChange={(e) => setNumber(e.target.value)}
+              value={number}
+              placeholder="Enter phone Number"
+              className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
+            />
+          </div>
+          {entity == "payer" ? (
+            <>
+              <div className="mb-3">
+                <label className="mb-2 block text-xs font-semibold">
+                  Tax ID
+                </label>
+                <input
+                  id="number"
+                  type="string"
+                  onChange={(e) => setTaxId(e.target.value)}
+                  value={taxId}
+                  placeholder="Enter Tax ID"
+                  className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
+                />
+              </div>
+              <div>
+                <label htmlFor="network">Provider Networks Covered:</label>
+                <select
+                  id="network"
+                  name="network"
+                  value={network}
+                  onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setNetwork(e.target.value)
+                  }
+                  className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="">Select Provider Network</option>
+                  <option value="Network A">Network A</option>
+                  <option value="Network B">Network B</option>
+                  <option value="Network C">Network C</option>
+                  {/* Add more provider networks as needed */}
+                </select>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-3">
+                <label className="mb-2 block text-xs font-semibold">
+                  Licence Number
+                </label>
+                <input
+                  id="number"
+                  type="string"
+                  onChange={(e) => setLicenceNumber(e.target.value)}
+                  value={licenceNumber}
+                  placeholder="Enter Tax ID"
+                  className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="mb-2 block text-xs font-semibold">NPI</label>
+                <input
+                  id="number"
+                  type="string"
+                  onChange={(e) => setNpi(e.target.value)}
+                  value={npi}
+                  placeholder="Enter NPI"
+                  className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="specialty"
+                  className="mb-2 block text-xs font-semibold"
+                >
+                  Specialty:
+                </label>
+                <select
+                  id="specialty"
+                  name="specialty"
+                  value={specialty}
+                  onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setSpecialty(e.target.value)
+                  }
+                  className="block w-full py-2 px-3 mb-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="">Select Specialty</option>
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="Dermatology">Dermatology</option>
+                  <option value="Endocrinology">Endocrinology</option>
+                  {/* Add more specialties as needed */}
+                </select>
+
+                <label
+                  htmlFor="payerPlan"
+                  className="mb-2 block text-xs font-semibold"
+                >
+                  Payer Plan Supported:
+                </label>
+                <select
+                  id="payerPlan"
+                  name="payerPlan"
+                  value={payerPlan}
+                  onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setPayerPlan(e.target.value)
+                  }
+                  className="block w-full py-2 px-3 mb-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="">Select Payer Plan</option>
+                  <option value="Plan A">Plan A</option>
+                  <option value="Plan B">Plan B</option>
+                  <option value="Plan C">Plan C</option>
+                  {/* Add more payer plans as needed */}
+                </select>
+              </div>
+            </>
+          )}
+          <div className="mb-3">
+            <label className="mb-2 block text-xs font-semibold">Age</label>
+            <input
+              id="age"
+              type="string"
+              onChange={(e) => setAge(e.target.value)}
+              value={age}
+              placeholder="Enter your age"
+              className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="mb-2 block text-xs font-semibold">Gender</label>
+            <label className="inline-flex items-center">
               <input
-                type="text"
-                className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
-                placeholder=" "
-                name="vehicleName"
-                required
+                type="radio"
+                className="form-radio text-indigo-600 h-5 w-5"
+                value=""
+                checked={gender === "male"}
+                onChange={() => handleRadioGenderChange("male")}
               />
-
-              <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3  peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                vehicle Name
-              </label>
-            </div>
-            <div className="relative z-0 w-full mb-6 group">
+              <span className="ml-2">male</span>
+            </label>
+            <label className="inline-flex items-center ml-6">
               <input
-                type="text"
-                // value={values.year}
-                // onChange={handleChange}
-                // onBlur={handleBlur}
-                name="year"
-                id="floating_company"
-                className={`
-                     block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
-                placeholder=""
-                required
+                type="radio"
+                className="form-radio text-indigo-600 h-5 w-5"
+                value="fe"
+                checked={gender === "female"}
+                onChange={() => handleRadioGenderChange("female")}
               />
-
-              <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                year
-              </label>
-            </div>
-          </div>
-
-          <div className="mb-3">
-            <label className="mb-2 block text-xs font-semibold">Email</label>
-            <input
-              id="email"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              placeholder="Enter your email"
-              className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="mb-2 block text-xs font-semibold">Email</label>
-            <input
-              id="email"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              placeholder="Enter your email"
-              className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="mb-2 block text-xs font-semibold">Email</label>
-            <input
-              id="email"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              placeholder="Enter your email"
-              className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="mb-2 block text-xs font-semibold">Email</label>
-            <input
-              id="email"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              placeholder="Enter your email"
-              className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
-            />
+              <span className="ml-2">female</span>
+            </label>
+            <label className="inline-flex items-center ml-6">
+              <input
+                type="radio"
+                className="form-radio text-indigo-600 h-5 w-5"
+                value=""
+                checked={gender === "nil"}
+                onChange={() => handleRadioGenderChange("nil")}
+              />
+              <span className="ml-2">nil</span>
+            </label>
           </div>
 
           <div className="mb-3">

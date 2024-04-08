@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ProviderPayerDetails } from "./Provider";
+import { ENTITY } from "./Entity";
 
 @Entity()
 export class Document {
@@ -13,8 +13,8 @@ export class Document {
   document_file_path: string;
 
   @ManyToOne(
-    () => ProviderPayerDetails,
-    (ProviderPayerDetails) => ProviderPayerDetails.addresses
+    () => ENTITY,
+    (ENTITY) => ENTITY.addresses
   ) // Define Many-to-One relationship with User entity
-  user: ProviderPayerDetails;
+  user: ENTITY;
 }
