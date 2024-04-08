@@ -1,8 +1,4 @@
-import {
-    Column,
-    Entity,
-    PrimaryGeneratedColumn
-} from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Admin {
@@ -12,8 +8,11 @@ export class Admin {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
+
+  @Column()
+  role: string;
 
   @Column()
   password: string;

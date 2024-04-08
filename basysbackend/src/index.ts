@@ -4,13 +4,16 @@ import * as dotenv from "dotenv";
 import { Request, Response } from "express";
 
 import "reflect-metadata";
+import adminRouter from "./router/admin.route";
+import { errorHandler } from "./middleware/error.middleware";
 dotenv.config();
 
 const app = express();
-app.use(express.json());
-// app.use(errorHandler);
 const { PORT = 3000 } = process.env;
-// app.use("/auth", userRouter);
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: false, limit: "50mb" }));
+app.use("/admin", adminRouter);
 // app.use("/api", movieRouter);
 
 app.get("*", (req: Request, res: Response) => {
@@ -25,3 +28,5 @@ AppDataSource.initialize()
     console.log("Data Source has been initialized!");
   })
   .catch((error) => console.log(error));
+
+app.use(errorHandler);
