@@ -44,4 +44,57 @@ export class AdminController {
       return res.status(500).json({ message: error.driverError.detail });
     }
   }
+  static async signin(
+    req: Request<null, null, { email: string; password: string }>,
+    res: Response
+  ) {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(404).json({ message: "should pass email,password" });
+      }
+      const userRepository = AppDataSource.getRepository(Admin);
+      const user = await userRepository.findOneBy({ email });
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: "User not found with the provided email" });
+      }
+
+      const verify = await encrypt.comparepassword(user.password, password);
+
+      if (verify) {
+        const token = encrypt.generateToken({ id: user.id });
+        delete user.password;
+        return res
+          .status(200)
+          .json({ message: "Admin success login", token, user });
+      } else {
+        return res.status(404).json({ message: "invalid credential" });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(404).json({ message: error.driverError.detail });
+    }
+  }
+  static async get(req: Request, res: Response) {
+    try {
+      const Token = req.headers.authorization;
+      console.log(Token);
+      const verify = encrypt.verifyToken(Token);
+      if (verify) {
+        const userRepository = AppDataSource.getRepository(Admin);
+        //@ts-ignore
+        const user = await userRepository.findOneBy({ id: verify.id });
+        delete user.password;
+        res.json({ Token, user });
+      } else {
+        return res.status(404).json({ message: "User not foundl" });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(404).json({ message: error.driverError.detail });
+    }
+  }
 }

@@ -8,6 +8,8 @@ const adminRouter = express.Router();
 
 
 adminRouter.post("/signup", AdminController.signup);
+adminRouter.post("/signin", AdminController.signin);
+adminRouter.get("/", AdminController.get);
 
 
 export default adminRouter 

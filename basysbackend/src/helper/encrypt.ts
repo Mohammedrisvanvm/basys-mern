@@ -9,13 +9,13 @@ export class encrypt {
     return argon2.hash(password);
   }
   static comparepassword(hashPassword: string, password: string) {
-    return argon2.verify(password, hashPassword);
+    return argon2.verify(hashPassword, password);
   }
- 
+
   static generateToken(payload: any) {
     return jwt.sign(payload, JWT_SECRET, { expiresIn: "1d" });
   }
- 
+
   static verifyToken(token: string) {
     return jwt.verify(token, JWT_SECRET);
   }

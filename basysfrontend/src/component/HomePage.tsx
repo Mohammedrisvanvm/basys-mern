@@ -1,10 +1,12 @@
-import React from 'react'
+import ProviderData from "./provider/ProviderData"
+import VerificationData from "./provider/VerificationData"
 
 const HomePage = () => {
   return (
-    <div className='text-9xl text-red-500'>
-      HomePAge
-    </div>
+    <>
+    {/* <VerificationData/> */}
+    <ProviderData/>
+    </>
   )
 }
 
