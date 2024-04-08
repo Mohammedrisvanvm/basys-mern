@@ -1,11 +1,12 @@
+import { IsEmail } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({name:"user"})
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   firstName: string;
 
   @Column()
@@ -14,13 +15,14 @@ export class User {
   @Column()
   nickName: string;
 
-  @Column()
+  @Column({ nullable: true})
   npi: string;
 
-  @Column()
+  @Column({ nullable: false })
+  @IsEmail({}, { message: "Email must be in a valid format" })
   email: string;
 
-  @Column()
+  @Column({ nullable: false })
   accessRights: string;
 
   @Column({ default: true })
@@ -31,5 +33,4 @@ export class User {
 
   @Column()
   password: string;
-
 }

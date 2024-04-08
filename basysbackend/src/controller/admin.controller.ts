@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../data-source";
 import { AdminResponce } from "../dto/admin.dto";
 import { Admin } from "../entity/Admin";
 import { encrypt } from "../helper/encrypt";
+import AppDataSource from "../data-source";
 
 export class AdminController {
   static async signup(
@@ -24,13 +24,13 @@ export class AdminController {
       admin.password = encryptedPassword;
       admin.role = "superadmin";
 
-      const userRepository = AppDataSource.getRepository(Admin);
-      await userRepository.save(admin);
-      //   Use the UserResponse DTO to structure the data being sent in the response
-      const userDataSent = new AdminResponce();
-      userDataSent.name = admin.name;
-      userDataSent.email = admin.email;
-      userDataSent.role = admin.role;
+      const adminRepository = AppDataSource.getRepository(Admin);
+      await adminRepository.save(admin);
+      //   Use the adminResponse DTO to structure the data being sent in the response
+      const adminDataSent = new AdminResponce();
+      adminDataSent.name = admin.name;
+      adminDataSent.email = admin.email;
+      adminDataSent.role = admin.role;
 
       const token = encrypt.generateToken({ id: admin.id });
       console.log(admin);
@@ -39,7 +39,7 @@ export class AdminController {
 
       return res
         .status(200)
-        .json({ message: "User created successfully", token, userDataSent });
+        .json({ message: "Admin created successfully", token, adminDataSent });
     } catch (error) {
       return res.status(500).json({ message: error.driverError.detail });
     }

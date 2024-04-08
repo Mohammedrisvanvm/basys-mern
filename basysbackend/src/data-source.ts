@@ -1,9 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { User } from "./entity/User";
-import { Admin } from "./entity/Admin";
 
-export const AppDataSource = new DataSource({
+const AppDataSource = new DataSource({
   type: "postgres",
   host: "localhost",
   port: 5432,
@@ -12,7 +10,8 @@ export const AppDataSource = new DataSource({
   database: "basys",
   synchronize: false,
   logging: false,
-  entities: [User, Admin],
-  migrations: [],
+  entities: ["src/entity/**/*.ts"],
+  migrations: ["src/migration/**/*.ts"],
   subscribers: [],
 });
+export default AppDataSource;

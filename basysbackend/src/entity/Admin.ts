@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
-@Entity()
+import { IsEmail } from "class-validator";
+@Entity({ name: "Admin" })
 export class Admin {
   @PrimaryGeneratedColumn()
   id: number;
@@ -8,7 +8,8 @@ export class Admin {
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
+  @IsEmail({}, { message: "Email must be in a valid format" })
   email: string;
 
   @Column()
