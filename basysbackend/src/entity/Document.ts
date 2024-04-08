@@ -10,11 +10,14 @@ export class Document {
   document_type: string;
 
   @Column()
+  document_originalname: string;
+
+  @Column()
+  document_filename: string;
+
+  @Column()
   document_file_path: string;
 
-  @ManyToOne(
-    () => ENTITY,
-    (ENTITY) => ENTITY.addresses
-  ) // Define Many-to-One relationship with User entity
+  @ManyToOne(() => ENTITY, (ENTITY) => ENTITY.Documentes) // Define Many-to-One relationship with ENTITY entity
   user: ENTITY;
 }

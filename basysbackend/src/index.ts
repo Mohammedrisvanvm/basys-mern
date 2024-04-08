@@ -9,6 +9,7 @@ import userRouter from "./router/user.route";
 import AppDataSource from "./data-source";
 import { allowedOrigins } from "./middleware/credential.middleware";
 import entityRouter from "./router/entity.route";
+import path = require("path");
 dotenv.config();
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: false, limit: "50mb" }));
+app.use(express.static(path.resolve() + "/public"));
 app.use("/admin", adminRouter);
 app.use("/user", userRouter);
 app.use("/entity", entityRouter);

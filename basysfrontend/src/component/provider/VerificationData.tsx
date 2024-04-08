@@ -1,15 +1,12 @@
-import React, {
+import {
   ChangeEvent,
   FormEvent,
   useEffect,
-  FC,
-  useState,
-  SetStateAction,
-  Dispatch,
+  useState
 } from "react";
 import { axiosBase } from "../../api/axios";
 
-const VerificationData = ({setHomePage}:{setHomePage:Dispatch<React.SetStateAction<string>>}) => {
+const VerificationData = () => {
   const [frontLicense, setFrontLicense] = useState<File | null>(null);
   const [backLicense, setBackLicense] = useState<File | null>(null);
   const [frontInsurance, setFrontInsurance] = useState<File | null>(null);
@@ -17,12 +14,7 @@ const VerificationData = ({setHomePage}:{setHomePage:Dispatch<React.SetStateActi
   const [imageData, setImageData] = useState<File[]>([]);
   const [Error, setError] = useState<string | null>(null);
 
-  useEffect(()=>{
-    axiosBase.get('/entity/get').then((res)=>{
-      console.log(res);
-      
-    })
-  })
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -57,6 +49,12 @@ const VerificationData = ({setHomePage}:{setHomePage:Dispatch<React.SetStateActi
       formData.append("images", file);
     });
 console.log(formData);
+
+  axiosBase.post('/entity/verification',formData).then((res)=>{
+    console.log(res);
+  
+    
+  })
 
     // ProfileVerificationData(formData);
     // setloading(!loading);

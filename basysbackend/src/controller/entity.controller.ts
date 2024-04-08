@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 
 import AppDataSource from "../data-source";
+import { Document } from "../entity/Document";
+import { ENTITY } from "../entity/Entity";
 import { User } from "../entity/User";
 import { encrypt } from "../helper/encrypt";
-import { ENTITY } from "../entity/Entity";
 import { authRequest } from "../middleware/authentication.middlewate";
+import { Address } from "../entity/Address";
 
 export class EntityController {
   static async create(req: Request<null, null, any>, res: Response) {
@@ -102,12 +104,31 @@ export class EntityController {
       return res.status(500).json({ message: error.driverError.detail });
     }
   }
-  static async updateAddress(req: Request<null, null, any>, res: Response) {
+  static async verification(req: authRequest, res: Response) {
     try {
-      const entity = req.headers.authorization;
-      console.log(entity);
-      const entityRepository = AppDataSource.getRepository(ENTITY);
-      // const userExist = await entityRepository.findOneBy({ email });
+      interface UploadedFile {
+        fieldname: string;
+        originalname: string;
+        encoding: string;
+        mimetype: string;
+        buffer: Buffer;
+        size: number;
+      }
+      const user = req.user;
+      const files: UploadedFile[] | any = req.files;
+
+      const DocumentRepository = AppDataSource.getRepository(Document);
+      const userRepository = AppDataSource.getRepository(User);
+      const userdata = await userRepository.findOneBy({ id: user });
+      for (const data of files) {
+        const newDocument = new Document();
+        newDocument.document_file_path = data.path;
+        newDocument.document_type = data.mimetype;
+        newDocument.document_originalname = data.originalname;
+        newDocument.document_filename = data.filename;
+        // newDocument.user = userdata;
+        await DocumentRepository.save(newDocument);
+      }
     } catch (error) {
       console.log(error);
 
@@ -117,51 +138,44 @@ export class EntityController {
   static async get(req: authRequest, res: Response) {
     try {
       const user = req.user;
-
       const entityRepository = AppDataSource.getRepository(ENTITY);
       const userExist = await entityRepository.findOneBy({ id: user });
-      delete userExist.password
-      return res.status(201).json({
-        message: "entiry created successfully",
+      if (!userExist) {
+        return res.status(404).json({
+          message: "credentials not found",
+        });
+      }
+      delete userExist.password;
+      return res.status(200).json({
+        message: "user data",
         user: userExist,
         nextStep: "Address",
       });
     } catch (error) {
       console.log(error);
-
       return res.status(500).json({ message: error.driverError.detail });
     }
   }
-  static async changePassword(
-    req: Request<null, null, { password: string; token: string }>,
-    res: Response
-  ) {
+  static async updateAddress(req: authRequest, res: Response) {
     try {
-      let { password, token } = req.body;
-
-      if (!password || !token) {
+      let { state, street, city, country, postalCode } = req.body;
+      console.log(state, street, city, country, postalCode);
+      if (!state || !street || !city || !country || !postalCode) {
         return res.status(404).json({ message: "should pass token,password" });
       }
-      const userRepository = AppDataSource.getRepository(User);
-      const decode = encrypt.verifyToken(token);
-      let id: number | undefined;
-      if (typeof decode === "string") {
-        // Handle the case where decode is a string
-        console.error("Invalid token format");
-      } else {
-        id = Number(decode.id);
-      }
-
-      const user = await userRepository.findOneBy({ id });
-      password = await encrypt.encryptpass(password);
-
-      user.password = password;
-      user.passwordIsTemporary = false;
-      await userRepository.save(user);
-
-      const newToken = encrypt.generateToken({ id: user.id });
-      delete user.password;
-      return res.status(200).json({ message: "success login", newToken, user });
+      const addressRepository = AppDataSource.getRepository(Address);
+      const entityRepository = AppDataSource.getRepository(ENTITY);
+      const user = req.user;
+      const userdata = await entityRepository.findOneBy({ id: user });
+      const newAddress = new Address();
+      newAddress.physicalStreet = street;
+      newAddress.physicalCity = city;
+      newAddress.physicalState = state;
+      newAddress.physicalPostalCode = postalCode;
+      newAddress.physicalCountry = country;
+      newAddress.user = userdata;
+      await addressRepository.save(newAddress);
+      return res.status(201).json({ message: "address added", userdata });
     } catch (error) {
       return res.status(500).json(error);
     }

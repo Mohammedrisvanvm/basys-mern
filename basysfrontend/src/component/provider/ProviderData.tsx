@@ -7,11 +7,7 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import { axiosBase } from "../../api/axios";
 
-const ProviderData = ({
-  setHomePage,
-}: {
-  setHomePage: Dispatch<React.SetStateAction<string>>;
-}) => {
+const ProviderData = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [age, setAge] = useState<string>("");
@@ -105,7 +101,7 @@ const ProviderData = ({
         console.log(res);
         if (res.status == 200) {
           localStorage.setItem("entityToken", res.data.entityToken);
-          setHomePage(res.data.nextStep);
+          Navigate('/address')
         } else {
           console.log(res.response.data.message);
         }
