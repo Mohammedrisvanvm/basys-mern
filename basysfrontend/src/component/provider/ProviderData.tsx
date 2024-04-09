@@ -49,69 +49,64 @@ const ProviderData = () => {
   const Navigate = useNavigate();
   const handleSubmit = async () => {
     try {
-      
-  
-    if (
-      !email ||
-      !password ||
-      !personName ||
-      !age ||
-      !gender ||
-      !entity ||
-      !number
-    ) {
-      console.log(email, password, age, personName);
-      console.log(gender, entity, number);
-    }
-    if (entity === "provider") {
-      setTaxId("");
-      setNetwork("");
-      if (!licenceNumber || !npi || !specialty || !payerPlan) {
-        console.log(licenceNumber, npi, specialty);
-        return;
+      if (
+        !email ||
+        !password ||
+        !personName ||
+        !age ||
+        !gender ||
+        !entity ||
+        !number
+      ) {
+        console.log(email, password, age, personName);
+        console.log(gender, entity, number);
       }
-    } else if (entity === "payer") {
-      setLicenceNumber("");
-      setNpi("");
-      setSpecialty("");
-      setPayerPlan("");
-      if (!taxId || !network) {
-        console.log(taxId, network);
-        return;
-      }
-    }
-
-    axiosBase
-      .post("/entity/create", {
-        email,
-        password,
-        age,
-        personName,
-        gender,
-        entity,
-        number,
-        licenceNumber,
-        npi,
-        taxId,
-        specialty,
-        payerPlan,
-        network,
-      })
-      .then((res: any) => {
-        console.log(res);
-        if (res.status == 200) {
-          localStorage.setItem("entityToken", res.data.entityToken);
-          Navigate('/address')
-        } else {
-          console.log(res.response.data.message);
+      if (entity === "provider") {
+        setTaxId("");
+        setNetwork("");
+        if (!licenceNumber || !npi || !specialty || !payerPlan) {
+          console.log(licenceNumber, npi, specialty);
+          return;
         }
-      });
+      } else if (entity === "payer") {
+        setLicenceNumber("");
+        setNpi("");
+        setSpecialty("");
+        setPayerPlan("");
+        if (!taxId || !network) {
+          console.log(taxId, network);
+          return;
+        }
+      }
 
-    // axios
-  } catch (error) {
-     console.log(error);
-      
-  }
+      axiosBase
+        .post("/entity/create", {
+          email,
+          password,
+          age,
+          personName,
+          gender,
+          entity,
+          number,
+          licenceNumber,
+          npi,
+          taxId,
+          specialty,
+          payerPlan,
+          network,
+        })
+        .then((res: any) => {
+          console.log(res);
+          if (res.status == 200) {
+            localStorage.setItem("entityToken", res.data.entityToken);
+            Navigate("/address");
+          }
+        });
+
+      // axios
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>

@@ -11,7 +11,7 @@ import { axiosBase } from "../../api/axios";
 // import { useAppSelector } from "../../../redux/store/storeHook";
 // import { toastHelper } from "../../../utils/toastConfig";
 
-const AdminLogin = () => {
+const UserLogin = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const Navigate = useNavigate();
@@ -20,11 +20,11 @@ const AdminLogin = () => {
       return;
     }
     console.log(email, password);
-    axiosBase.post("/admin/signin", { email, password }).then((res: any) => {
+    axiosBase.post("/user/signin", { email, password }).then((res: any) => {
       console.log(res);
-      if (res.status == 200) {
-        localStorage.setItem("token", res.data.token);
-        Navigate("/admin");
+      if (res.status == 200&&res.data.message=="please change password") {
+        localStorage.setItem("usertoken", res.data.token);
+        Navigate("/changepassword");
       } else {
         console.log(res.response.data.message);
       }
@@ -48,7 +48,7 @@ const AdminLogin = () => {
               <div className="w-full max-w-xl xl:px-8 xl:w-5/12">
                 <div className="bg-white rounded shadow-2xl p-7 sm:p-10">
                   <h3 className="mb-4 text-xl font-semibold sm:text-center sm:mb-6 sm:text-2xl">
-                    Admin Login
+                     Login
                   </h3>
                   <div className="mb-3">
                     <label className="mb-2 block text-xs font-semibold">
@@ -97,4 +97,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default UserLogin;

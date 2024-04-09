@@ -25,23 +25,19 @@ const AddAddress = () => {
           postalCode,
         })
         .then((res: any) => {
-          console.log(res)
-        //   Navigate('/')
+          console.log(res);
+          Navigate("/verification");
         });
-
-      // axios
     } catch (error) {
       console.log(error);
     }
   };
   return (
     <>
-      <div className="text-3xl">Create Provider/Payer Form</div>
+      <div className="text-3xl">Create Address Form</div>
 
       <div className="container flex justify-around p-6">
         <div className="w-96">
-         
-
           <div className="mb-3">
             <label className="mb-2 block text-xs font-semibold">street</label>
             <input
@@ -67,9 +63,7 @@ const AddAddress = () => {
           </div>
 
           <div className="mb-3">
-            <label className="mb-2 block text-xs font-semibold">
-              State
-            </label>
+            <label className="mb-2 block text-xs font-semibold">State</label>
             <input
               id="state"
               type="string"
@@ -79,9 +73,11 @@ const AddAddress = () => {
               className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
             />
           </div>
-        
+
           <div className="mb-3">
-            <label className="mb-2 block text-xs font-semibold">Postal Code</label>
+            <label className="mb-2 block text-xs font-semibold">
+              Postal Code
+            </label>
             <input
               id="postalCode"
               type="string"
@@ -91,7 +87,6 @@ const AddAddress = () => {
               className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
             />
           </div>
-       
 
           <div className="mb-3">
             <label className="mb-2 block text-xs font-semibold">Country</label>

@@ -18,8 +18,7 @@ export class User {
   @Column({ nullable: true})
   npi: string;
 
-  @Column({ nullable: false })
-  @IsEmail({}, { message: "Email must be in a valid format" })
+  @Column({ nullable: false,unique:true })
   email: string;
 
   @Column({ nullable: false })

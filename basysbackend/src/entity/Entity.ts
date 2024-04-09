@@ -37,10 +37,10 @@ export class ENTITY {
   @Column()
   password: string;
 
-  @OneToMany(() => Address, (address) => address.user, { cascade: true }) // Define One-to-Many relationship with Address entity
+  @OneToMany(() => Address,(Address)=>Address.entity,{cascade:true}) // Define One-to-Many relationship with Address entity
   addresses: Address[];
 
-  @OneToMany(() => Document, (Document) => Document.user, { cascade: true }) // Define One-to-Many relationship with Document entity
+  @OneToMany(() => Document,(Document)=>Document.entity,{cascade:true}) // Define One-to-Many relationship with Document entity
   Documentes: Document[];
 
   @Column({ nullable: true, unique: true })

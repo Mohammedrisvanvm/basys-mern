@@ -22,7 +22,7 @@ const onRequest = (
 ): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> => {
   console.info(`[request] [${JSON.stringify(config)}]`);
   const token = localStorage.getItem(
-    config.url?.startsWith("/entity/") ? "entityToken" : "token"
+    config.url?.startsWith("/entity/") ? "entityToken" : "usertoken"
   );
 
   config.headers.Authorization = token;

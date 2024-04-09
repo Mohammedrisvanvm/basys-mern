@@ -18,6 +18,7 @@ export class Document {
   @Column()
   document_file_path: string;
 
-  @ManyToOne(() => ENTITY, (ENTITY) => ENTITY.Documentes) // Define Many-to-One relationship with ENTITY entity
-  user: ENTITY;
+  @ManyToOne(()=>ENTITY, (ENTITY) => ENTITY.Documentes)
+  entity: ENTITY;
 }
+

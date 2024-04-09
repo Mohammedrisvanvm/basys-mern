@@ -51,18 +51,18 @@ export class EntityController {
         !entity ||
         !number
       ) {
-        // return res.status(404).json({ message: "should pass CREDENTIALS" });
+        return res.status(404).json({ message: "should pass CREDENTIALS" });
       }
       if (entity === "provider") {
         if (!licenceNumber || !npi || !specialty || !payerPlan) {
           console.log(licenceNumber, npi, specialty);
-          //   return res.status(404).json({ message: "licenceNumber, npi" });
+          return res.status(404).json({ message: "licenceNumber, npi" });
         }
       } else if (entity === "payer") {
         if (!taxId || !network) {
-          //   return res
-          //     .status(404)
-          //     .json({ message: "should pass name,email,password" });
+          return res
+            .status(404)
+            .json({ message: "should pass name,email,password" });
         }
       }
       const entityRepository = AppDataSource.getRepository(ENTITY);
@@ -118,15 +118,15 @@ export class EntityController {
       const files: UploadedFile[] | any = req.files;
 
       const DocumentRepository = AppDataSource.getRepository(Document);
-      const userRepository = AppDataSource.getRepository(User);
-      const userdata = await userRepository.findOneBy({ id: user });
+      const entityRepository = AppDataSource.getRepository(ENTITY);
+      const entitydata = await entityRepository.findOneBy({ id: user });
       for (const data of files) {
         const newDocument = new Document();
         newDocument.document_file_path = data.path;
         newDocument.document_type = data.mimetype;
         newDocument.document_originalname = data.originalname;
         newDocument.document_filename = data.filename;
-        // newDocument.user = userdata;
+        newDocument.entity = entitydata;
         await DocumentRepository.save(newDocument);
       }
     } catch (error) {
@@ -139,13 +139,17 @@ export class EntityController {
     try {
       const user = req.user;
       const entityRepository = AppDataSource.getRepository(ENTITY);
-      const userExist = await entityRepository.findOneBy({ id: user });
+      const userExist = await entityRepository.find({
+        relations:{
+          addresses:true
+        }
+      })
+      
       if (!userExist) {
         return res.status(404).json({
           message: "credentials not found",
         });
       }
-      delete userExist.password;
       return res.status(200).json({
         message: "user data",
         user: userExist,
@@ -173,7 +177,7 @@ export class EntityController {
       newAddress.physicalState = state;
       newAddress.physicalPostalCode = postalCode;
       newAddress.physicalCountry = country;
-      newAddress.user = userdata;
+      newAddress.entity = userdata;
       await addressRepository.save(newAddress);
       return res.status(201).json({ message: "address added", userdata });
     } catch (error) {

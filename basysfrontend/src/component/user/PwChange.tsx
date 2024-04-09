@@ -1,5 +1,5 @@
 // import { useFormik } from "formik";
-import { MouseEvent, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { axiosBase } from "../../api/axios";
 // import { AdminAuthSchema } from "../../../validationSchemas/validationSchema";
@@ -11,28 +11,29 @@ import { axiosBase } from "../../api/axios";
 // import { useAppSelector } from "../../../redux/store/storeHook";
 // import { toastHelper } from "../../../utils/toastConfig";
 
-const AdminLogin = () => {
-  const [email, setEmail] = useState<string>("");
+const PwChange = () => {
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const Navigate = useNavigate();
   const handleSubmit = async () => {
-    if (!email || !password) {
+    if (!confirmPassword || !password) {
       return;
     }
-    console.log(email, password);
-    axiosBase.post("/admin/signin", { email, password }).then((res: any) => {
-      console.log(res);
-      if (res.status == 200) {
-        localStorage.setItem("token", res.data.token);
-        Navigate("/admin");
-      } else {
-        console.log(res.response.data.message);
-      }
-    });
+    console.log(confirmPassword, password);
+    axiosBase
+      .post("/user/changepassword", { confirmPassword, password })
+      .then((res: any) => {
+        console.log(res);
+        if (res.status == 200 && res.data.message == "success login") {
+          localStorage.setItem("usertoken", res.data.token);
+          Navigate("/");
+        } else {
+          console.log(res.response.data.message);
+        }
+      });
 
     // axios
   };
- 
 
   return (
     <>
@@ -48,21 +49,8 @@ const AdminLogin = () => {
               <div className="w-full max-w-xl xl:px-8 xl:w-5/12">
                 <div className="bg-white rounded shadow-2xl p-7 sm:p-10">
                   <h3 className="mb-4 text-xl font-semibold sm:text-center sm:mb-6 sm:text-2xl">
-                    Admin Login
+                    Change Password
                   </h3>
-                  <div className="mb-3">
-                    <label className="mb-2 block text-xs font-semibold">
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      onChange={(e) => setEmail(e.target.value)}
-                      value={email}
-                      placeholder="Enter your email"
-                      className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
-                    />
-                  </div>
 
                   <div className="mb-3">
                     <label className="mb-2 block text-xs font-semibold">
@@ -79,12 +67,26 @@ const AdminLogin = () => {
                   </div>
 
                   <div className="mb-3">
+                    <label className="mb-2 block text-xs font-semibold">
+                      Confirm Password
+                    </label>
+                    <input
+                      id="confirmPassword"
+                      type="password"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      value={confirmPassword}
+                      placeholder="*****"
+                      className={` flex-grow w-full h-12 px-4 mb-2 transition duration-200 bg-white border border-gray-300 rounded shadow-sm appearance-none focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline `}
+                    />
+                  </div>
+
+                  <div className="mb-3">
                     <button
                       onClick={() => handleSubmit()}
                       type="submit"
                       className="mb-1.5 block w-full text-center text-white bg-black hover:bg-white hover:text-black hover:rounded-md hover:border-2 px-2 py-1.5 rounded-md"
                     >
-                      Sign in
+                      Update Password
                     </button>
                   </div>
                 </div>
@@ -97,4 +99,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default PwChange;

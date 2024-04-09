@@ -55,9 +55,6 @@ console.log(formData);
   
     
   })
-
-    // ProfileVerificationData(formData);
-    // setloading(!loading);
   }, [imageData]);
   const resetState = () => {
     setFrontLicense(null);

@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import AppDataSource from "../data-source";
 import { User } from "../entity/User";
 import { encrypt } from "../helper/encrypt";
+import { authRequest } from "../middleware/authentication.middlewate";
 
 export class UserController {
   static async signup(req: Request<null, null, any>, res: Response) {
@@ -55,7 +56,9 @@ export class UserController {
       }
       const userRepository = AppDataSource.getRepository(User);
       const user = await userRepository.findOneBy({ email });
-      const verify = await encrypt.comparepassword(password, user.password);
+      console.log(user);
+
+      const verify = await encrypt.comparepassword(user.password, password);
       if (verify) {
         const token = encrypt.generateToken({ id: user.id });
         if (user.passwordIsTemporary) {
@@ -74,38 +77,68 @@ export class UserController {
       return res.status(500).json({ message: error.driverError.detail });
     }
   }
-  static async changePassword(
-    req: Request<null, null, { password: string; token: string }>,
-    res: Response
-  ) {
+  static async changePassword(req: authRequest, res: Response) {
     try {
-      let { password, token } = req.body;
+      let { password, confirmPassword } = req.body;
 
-      if (!password || !token) {
+      if (!password || !confirmPassword) {
         return res.status(404).json({ message: "should pass token,password" });
       }
-      const userRepository = AppDataSource.getRepository(User);
-      const decode = encrypt.verifyToken(token);
-      let id: number | undefined;
-      if (typeof decode === "string") {
-        // Handle the case where decode is a string
-        console.error("Invalid token format");
-      } else {
-        id = Number(decode.id);
+      if (password !== confirmPassword) {
+        return res.status(401).json({ message: "credential is wrong" });
       }
+      const userRepository = AppDataSource.getRepository(User);
 
+      const id = req.user;
       const user = await userRepository.findOneBy({ id });
-      password = await encrypt.encryptpass(password);
+      if (user) {
+        password = await encrypt.encryptpass(password);
 
-      user.password = password;
-      user.passwordIsTemporary = false;
-      await userRepository.save(user);
+        user.password = password;
+        user.passwordIsTemporary = false;
+        await userRepository.save(user);
 
-      const newToken = encrypt.generateToken({ id: user.id });
-      delete user.password;
-      return res.status(200).json({ message: "success login", newToken, user });
+        const newToken = encrypt.generateToken({ id: user.id });
+        delete user.password;
+        return res
+          .status(200)
+          .json({ message: "success login", token: newToken, user });
+      }
     } catch (error) {
       return res.status(500).json(error);
+    }
+  }
+  static async editUser(req: authRequest, res: Response) {
+    try {
+      const { firstName, lastName, email, nickName, password, npi } = req.body;
+      const id = req.user;
+      const userRepository = AppDataSource.getRepository(User);
+      const encryptedPassword = await encrypt.encryptpass(password);
+      const user = await userRepository.findOneBy({
+        id,
+      });
+      console.log(user);
+
+      user.firstName = firstName ?? user.firstName;
+      user.lastName = lastName ?? user.lastName;
+      user.email = email ?? user.email;
+      user.password = password ? encryptedPassword : user.password;
+      user.nickName = nickName ?? user.nickName;
+      user.npi = npi ?? user.npi;
+      console.log(user);
+
+      await userRepository.save(user);
+
+      const token = encrypt.generateToken({ id: user.id });
+      delete user.password;
+      //nodemailer
+      return res
+        .status(200)
+        .json({ message: "User edited successfully", token, user });
+    } catch (error) {
+      console.log(error);
+
+      return res.status(500).json({ message: error.driverError.detail });
     }
   }
 }

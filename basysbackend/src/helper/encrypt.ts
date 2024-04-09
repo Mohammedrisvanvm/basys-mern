@@ -17,7 +17,7 @@ export class encrypt {
     return argon2.verify(hashPassword, password);
   }
 
-  static generateToken(payload: any) {
+  static generateToken(payload: {id:number}) {
     return jwt.sign(payload, JWT_SECRET, { expiresIn: "1d" });
   }
 
