@@ -14,6 +14,7 @@ const UserTable = () => {
   const [nickName, setNickName] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const Navigate = useNavigate();
 
   const [users, setUsers] = useState<[] | null>(null);
@@ -21,7 +22,7 @@ const UserTable = () => {
     axiosBase.get("/admin/users").then((res: any) => {
       setUsers(res.data.users);
     });
-  }, []);
+  }, [loading]);
 
   const handleVerify = async () => {
     try {
@@ -49,6 +50,7 @@ const UserTable = () => {
         .then((res) => {
           if (res.status == 200) {
             console.log(res.data.message);
+            setLoading(!loading);
             setShowModal(false);
           }
         });
@@ -60,6 +62,14 @@ const UserTable = () => {
   return (
     <div className="p-10 border">
       <h1 className="text-3xl">Admin-User Table</h1>
+      <div className="mb-3 flex justify-start mt-10">
+        <button
+          onClick={() => Navigate("/admin/entities")}
+          className="mb-1.5 block w-22 text-center text-white bg-black hover:bg-white hover:text-black hover:rounded-md hover:border-2 px-2 py-1.5 rounded-md"
+        >
+          entity Table
+        </button>
+      </div>
       <div className="mb-3 flex justify-end mt-10">
         <button
           onClick={() => Navigate("/admin/createuser")}
@@ -89,6 +99,9 @@ const UserTable = () => {
               <th scope="col" className="px-6 py-3">
                 NPI
               </th>
+              <th scope="col" className="px-6 py-3">
+                Access Rights
+              </th>
 
               <th scope="col" className="px-6 py-3">
                 Status
@@ -108,6 +121,7 @@ const UserTable = () => {
 
                     <td className="px-6 py-4"> {item.email}</td>
                     <td className="px-6 py-4"> {item.npi}</td>
+                    <td className="px-6 py-4"> {item.accessRights}</td>
 
                     <td className="px-6 py-4">
                       {" "}

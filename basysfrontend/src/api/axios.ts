@@ -13,7 +13,7 @@ const baseURL: string = `http://localhost:3000`;
 
 export const axiosBase = axios.create({
   baseURL: baseURL,
-  timeout: 10000,
+  timeout: 15000,
   withCredentials: true,
 });
 

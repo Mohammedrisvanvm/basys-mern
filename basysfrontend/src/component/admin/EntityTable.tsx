@@ -42,6 +42,14 @@ const EntityTable = () => {
   return (
     <div className="p-10 border">
       <h1 className="text-3xl">Admin-Entity Table</h1>
+      <div className="mb-3 flex justify-start mt-10">
+        <button
+          onClick={() => Navigate("/admin/users")}
+          className="mb-1.5 block w-22 text-center text-white bg-black hover:bg-white hover:text-black hover:rounded-md hover:border-2 px-2 py-1.5 rounded-md"
+        >
+          users Table
+        </button>
+      </div>
       <div className="mb-3 flex justify-end mt-10">
         <button
           onClick={() => Navigate("/admin/createuser")}
@@ -51,6 +59,7 @@ const EntityTable = () => {
           Create User
         </button>
       </div>
+
       <div>
         {" "}
         <table className="w-full text-sm text-left  text-gray-500 dark:text-gray-400 over">
@@ -87,9 +96,9 @@ const EntityTable = () => {
               {/* <th scope="col" className="px-6 py-3">
                 Status
               </th> */}
-              {/* <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3">
                 Action
-              </th> */}
+              </th>
             </tr>
           </thead>
           <tbody className=" ">

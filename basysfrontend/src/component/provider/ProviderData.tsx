@@ -21,14 +21,7 @@ const ProviderData = () => {
   const [specialty, setSpecialty] = useState<string>("");
   const [payerPlan, setPayerPlan] = useState("");
   const [network, setNetwork] = useState("");
-  const specialtydata = [
-    "Cardiology",
-    "Dermatology",
-    "Endocrinology",
-    "Gastroenterology",
-    "Hematology",
-    // Add more specialties as needed
-  ];
+
   // State to manage the visibility of the dropdown menu
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -100,6 +93,9 @@ const ProviderData = () => {
           if (res.status == 200) {
             localStorage.setItem("entityToken", res.data.entityToken);
             Navigate("/address");
+          }else{
+            console.log(res);
+            
           }
         });
 

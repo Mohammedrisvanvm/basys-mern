@@ -4,6 +4,7 @@ import AppDataSource from "../data-source";
 import { User } from "../entity/User";
 import { encrypt } from "../helper/encrypt";
 import { authRequest } from "../middleware/authentication.middlewate";
+import { RegmailService } from "../util/nodeMailer/registeredmail";
 
 export class UserController {
   static async signup(req: Request<null, null, any>, res: Response) {
@@ -96,10 +97,12 @@ export class UserController {
 
         user.password = password;
         user.passwordIsTemporary = false;
+        user.status = "Onboarded";
         await userRepository.save(user);
 
         const newToken = encrypt.generateToken({ id: user.id });
         delete user.password;
+        RegmailService(user.email)
         return res
           .status(200)
           .json({ message: "success login", token: newToken, user });
@@ -111,21 +114,19 @@ export class UserController {
   static async editUser(req: authRequest, res: Response) {
     try {
       const { firstName, lastName, email, nickName, password, npi } = req.body;
+      console.log(firstName, lastName, email, nickName, password);
       const id = req.user;
       const userRepository = AppDataSource.getRepository(User);
       const encryptedPassword = await encrypt.encryptpass(password);
       const user = await userRepository.findOneBy({
         id,
       });
-      console.log(user);
-
-      user.firstName = firstName ?? user.firstName;
-      user.lastName = lastName ?? user.lastName;
-      user.email = email ?? user.email;
+      user.firstName = firstName ? firstName : user.firstName;
+      user.lastName = lastName ? lastName : user.lastName;
+      user.email = email ? email : user.email;
       user.password = password ? encryptedPassword : user.password;
-      user.nickName = nickName ?? user.nickName;
-      user.npi = npi ?? user.npi;
-      console.log(user);
+      user.nickName = nickName ? nickName : user.nickName;
+      user.npi = npi ? npi : user.npi;
 
       await userRepository.save(user);
 
@@ -134,7 +135,7 @@ export class UserController {
       //nodemailer
       return res
         .status(200)
-        .json({ message: "User edited successfully", token, user });
+        .json({ message: "User edit successfully", token, user });
     } catch (error) {
       console.log(error);
 

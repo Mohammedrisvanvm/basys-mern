@@ -151,6 +151,7 @@ console.log(users);
       user.password = encryptedPassword;
       user.accessRights = "admin";
       user.nickName = nickName;
+      user.status = "Invitation sent";
       user.npi = npi !== null ? npi : null;
       console.log(user);
 

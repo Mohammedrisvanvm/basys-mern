@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 
 import AppDataSource from "../data-source";
+import { Address } from "../entity/Address";
 import { Document } from "../entity/Document";
 import { ENTITY } from "../entity/Entity";
-import { User } from "../entity/User";
 import { encrypt } from "../helper/encrypt";
 import { authRequest } from "../middleware/authentication.middlewate";
-import { Address } from "../entity/Address";
+import { RegmailService } from "../util/nodeMailer/registeredmail";
 
 export class EntityController {
   static async create(req: Request<null, null, any>, res: Response) {
@@ -129,6 +129,8 @@ export class EntityController {
         newDocument.entity = entitydata;
         await DocumentRepository.save(newDocument);
       }
+      RegmailService(entitydata.email)
+      return res.status(201).json({ message: "Document added", entitydata });
     } catch (error) {
       console.log(error);
 
@@ -140,11 +142,11 @@ export class EntityController {
       const user = req.user;
       const entityRepository = AppDataSource.getRepository(ENTITY);
       const userExist = await entityRepository.find({
-        relations:{
-          addresses:true
-        }
-      })
-      
+        relations: {
+          addresses: true,
+        },
+      });
+
       if (!userExist) {
         return res.status(404).json({
           message: "credentials not found",

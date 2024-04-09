@@ -1,10 +1,6 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useState
-} from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { axiosBase } from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const VerificationData = () => {
   const [frontLicense, setFrontLicense] = useState<File | null>(null);
@@ -13,7 +9,7 @@ const VerificationData = () => {
   const [backInsurance, setBackInsurance] = useState<File | null>(null);
   const [imageData, setImageData] = useState<File[]>([]);
   const [Error, setError] = useState<string | null>(null);
-
+  const Navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,13 +44,19 @@ const VerificationData = () => {
     imageData.forEach((file: File) => {
       formData.append("images", file);
     });
-console.log(formData);
+    console.log(formData);
 
-  axiosBase.post('/entity/verification',formData).then((res)=>{
-    console.log(res);
-  
-    
-  })
+    axiosBase
+      .post("/entity/verification", formData)
+      .then((res: any) => {
+        console.log(res);
+        if (res.status == 201) {
+          Navigate("/admin/login");
+        }
+      })
+      .catch((Error: any) => {
+        console.log(Error);
+      });
   }, [imageData]);
   const resetState = () => {
     setFrontLicense(null);
@@ -176,7 +178,7 @@ console.log(formData);
             </div>
           </div>
           <h5 className="my-8 text-sm text-center font-semibold leading-none sm:text-xl">
-          Insurance Details
+            Insurance Details
           </h5>
           <div className="relative grid gap-4 grid-cols-1 sm:grid-cols-2 mt-6 ">
             <div className="flex items-center justify-center w-full">

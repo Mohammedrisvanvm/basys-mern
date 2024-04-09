@@ -17,7 +17,7 @@ export const mailService = (email: string, password: string) => {
                 </ul>
                 <p>Please use these credentials to sign in to your account.</p>
                 <p>Regards,</p>
-                <p>Your Application Team</p>
+                <p>Basys Application Team</p>
             </div>
         </div>
     `,

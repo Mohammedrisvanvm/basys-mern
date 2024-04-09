@@ -1,4 +1,3 @@
-import { IsEmail } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:"user"})
@@ -26,6 +25,9 @@ export class User {
 
   @Column({ default: true })
   active: boolean;
+
+  @Column()
+  status: string;
 
   @Column({ default: true })
   passwordIsTemporary: boolean;
