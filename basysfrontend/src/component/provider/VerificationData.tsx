@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { axiosBase } from "../../api/axios";
 import { useNavigate } from "react-router-dom";
+import { toastHelper } from "../../util/toast";
 
 const VerificationData = () => {
   const [frontLicense, setFrontLicense] = useState<File | null>(null);
@@ -48,10 +49,15 @@ const VerificationData = () => {
 
     axiosBase
       .post("/entity/verification", formData)
-      .then((res: any) => {
-        console.log(res);
-        if (res.status == 201) {
+      .then((response: any) => {
+        console.log(response);
+        if (response.status === 201 || 200) {
+          localStorage.setItem("entityToken", response.data.entityToken);
+          toastHelper("success", response.data.message);
           Navigate("/admin/login");
+        } else {
+          toastHelper("error", `Unexpected status code:${response.status}`);
+          console.error("Unexpected status code:", response.status);
         }
       })
       .catch((Error: any) => {

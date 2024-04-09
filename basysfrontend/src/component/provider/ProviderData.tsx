@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosBase } from "../../api/axios";
+import { toastHelper } from "../../util/toast";
 
 const ProviderData = () => {
   const [email, setEmail] = useState<string>("");
@@ -53,12 +54,13 @@ const ProviderData = () => {
       ) {
         console.log(email, password, age, personName);
         console.log(gender, entity, number);
+        toastHelper("error", "fill the empty input");
       }
       if (entity === "provider") {
         setTaxId("");
         setNetwork("");
         if (!licenceNumber || !npi || !specialty || !payerPlan) {
-          console.log(licenceNumber, npi, specialty);
+          toastHelper("error", "fill the empty input");
           return;
         }
       } else if (entity === "payer") {
@@ -68,6 +70,7 @@ const ProviderData = () => {
         setPayerPlan("");
         if (!taxId || !network) {
           console.log(taxId, network);
+          toastHelper("error", "fill the empty input");
           return;
         }
       }
@@ -88,19 +91,24 @@ const ProviderData = () => {
           payerPlan,
           network,
         })
-        .then((res: any) => {
-          console.log(res);
-          if (res.status == 200) {
-            localStorage.setItem("entityToken", res.data.entityToken);
-            Navigate("/address");
-          }else{
-            console.log(res);
-            
-          }
-        });
+        .then((response:any) => {
+          console.log(response);
 
-      // axios
-    } catch (error) {
+          if (response.status === 201||200) {
+            localStorage.setItem("entityToken", response.data.entityToken);
+            toastHelper("success", response.data.message);
+            Navigate("/address");
+          } else {
+            toastHelper("error", `Unexpected status code:${response.status}`);
+            console.error("Unexpected status code:", response.status);
+          }
+        })
+        .catch((error) => {
+          console.error("Error occurred during the request:", error);
+        });
+    } catch (error:any) {
+    
+      
       console.log(error);
     }
   };

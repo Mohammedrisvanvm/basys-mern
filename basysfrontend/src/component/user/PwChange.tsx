@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { axiosBase } from "../../api/axios";
+import { toastHelper } from "../../util/toast";
 // import { AdminAuthSchema } from "../../../validationSchemas/validationSchema";
 
 // import { adminAuth } from "../../../services/apis/adminApi/adminApi";
@@ -23,12 +24,16 @@ const PwChange = () => {
     axiosBase
       .post("/user/changepassword", { confirmPassword, password })
       .then((res: any) => {
-        console.log(res);
+      
         if (res.status == 200 && res.data.message == "success login") {
-          localStorage.setItem("usertoken", res.data.token);
+          toastHelper("success", res.data.message);
+          localStorage.setItem("token", res.data.token);
           Navigate("/");
         } else {
-          console.log(res.response.data.message);
+          console.log(res.data);
+          
+          toastHelper("error", `Unexpected status code:${res.status}`);
+          console.error("Unexpected status code:", res);
         }
       });
 

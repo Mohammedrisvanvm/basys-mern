@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import React from "react";
 import { axiosBase } from "../../api/axios";
+import { toastHelper } from "../../util/toast";
 
 const UserTable = () => {
   const [modalData, setModalData] = React.useState<any>();
@@ -50,11 +51,13 @@ const UserTable = () => {
         .then((res) => {
           if (res.status == 200) {
             console.log(res.data.message);
+            toastHelper("success", res.data.message);
             setLoading(!loading);
             setShowModal(false);
           }
         });
-    } catch (error) {
+    } catch (error:any) {
+      toastHelper("error", error.message);
       console.log(error);
     }
   };

@@ -70,7 +70,7 @@ export class UserController {
         delete user.password;
         return res.status(200).json({ message: "success login", token, user });
       } else {
-        return res.status(404).json({ message: "invalid credential" });
+        return res.status(401).json({ message: "invalid credential" });
       }
     } catch (error) {
       console.log(error);
@@ -105,7 +105,7 @@ export class UserController {
         RegmailService(user.email)
         return res
           .status(200)
-          .json({ message: "success login", token: newToken, user });
+          .json({ message: "success updated password", token: newToken, user });
       }
     } catch (error) {
       return res.status(500).json(error);

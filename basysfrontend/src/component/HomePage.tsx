@@ -4,8 +4,7 @@ import { axiosBase } from "../api/axios"
 const HomePage = () => {
   useEffect(()=>{
     axiosBase.get('/entity/get').then((res)=>{
-      console.log(res);
-      
+      console.log(res); 
     })
   })
   return (

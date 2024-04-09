@@ -97,7 +97,6 @@ export class EntityController {
       return res.status(201).json({
         message: "entiry created successfully",
         entityToken: token,
-        nextStep: newEntity.nextStep,
       });
     } catch (error) {
       console.log(error);
@@ -129,8 +128,12 @@ export class EntityController {
         newDocument.entity = entitydata;
         await DocumentRepository.save(newDocument);
       }
-      RegmailService(entitydata.email)
-      return res.status(201).json({ message: "Document added", entitydata });
+      const token = encrypt.generateToken({ id: entitydata.id });
+      RegmailService(entitydata.email);
+      return res.status(201).json({
+        message: "Document added",
+        entityToken: token,
+      });
     } catch (error) {
       console.log(error);
 
@@ -144,6 +147,7 @@ export class EntityController {
       const userExist = await entityRepository.find({
         relations: {
           addresses: true,
+          Documentes: true,
         },
       });
 
@@ -181,7 +185,10 @@ export class EntityController {
       newAddress.physicalCountry = country;
       newAddress.entity = userdata;
       await addressRepository.save(newAddress);
-      return res.status(201).json({ message: "address added", userdata });
+      const token = encrypt.generateToken({ id: userdata.id });
+      return res
+        .status(201)
+        .json({ message: "address added", entityToken: token, userdata });
     } catch (error) {
       return res.status(500).json(error);
     }

@@ -165,7 +165,7 @@ console.log(users);
       mailService(user.email, password);
       //nodemailer
       return res
-        .status(200)
+        .status(201)
         .json({ message: "User created successfully", token, user });
     } catch (error) {
       console.log(error);

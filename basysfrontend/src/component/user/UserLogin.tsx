@@ -2,6 +2,7 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { axiosBase } from "../../api/axios";
+import { toastHelper } from "../../util/toast";
 // import { AdminAuthSchema } from "../../../validationSchemas/validationSchema";
 
 // import { adminAuth } from "../../../services/apis/adminApi/adminApi";
@@ -21,18 +22,24 @@ const UserLogin = () => {
     }
     console.log(email, password);
     axiosBase.post("/user/signin", { email, password }).then((res: any) => {
-      console.log(res);
-      if (res.status == 200&&res.data.message=="please change password") {
-        localStorage.setItem("usertoken", res.data.token);
-        Navigate("/changepassword");
+      if (res.status === 200) {
+        localStorage.setItem("token", res.data.token);
+        toastHelper("success", res.data.message);
+        if (res.data.message == "please change password") {
+          Navigate("/changepassword");
+        } else {
+          Navigate("/admin");
+        }
       } else {
-        console.log(res.response.data.message);
+        console.log(res);
+
+        toastHelper("error", `${res.response.data.message}`);
+        console.error("Unexpected status code:", res.status);
       }
     });
 
     // axios
   };
- 
 
   return (
     <>
@@ -48,7 +55,7 @@ const UserLogin = () => {
               <div className="w-full max-w-xl xl:px-8 xl:w-5/12">
                 <div className="bg-white rounded shadow-2xl p-7 sm:p-10">
                   <h3 className="mb-4 text-xl font-semibold sm:text-center sm:mb-6 sm:text-2xl">
-                     Login
+                    Login
                   </h3>
                   <div className="mb-3">
                     <label className="mb-2 block text-xs font-semibold">

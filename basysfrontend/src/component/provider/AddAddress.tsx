@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { axiosBase } from "../../api/axios";
 import { useNavigate } from "react-router-dom";
+import { toastHelper } from "../../util/toast";
 
 const AddAddress = () => {
   const [street, setStreet] = useState<string>("");
@@ -24,11 +25,20 @@ const AddAddress = () => {
           country,
           postalCode,
         })
-        .then((res: any) => {
-          console.log(res);
-          Navigate("/verification");
-        });
-    } catch (error) {
+        .then((response: any) => {
+          console.log(response);
+          if (response.status === 201) {
+            localStorage.setItem("entityToken", response.data.entityToken);
+            toastHelper("success", response.data.message);
+            Navigate("/verification");
+          } else {
+            toastHelper("error", `Unexpected status code:${response.status}`);
+            console.error("Unexpected status code:", response.status);
+          }
+        })
+         
+       
+    } catch (error:any) {
       console.log(error);
     }
   };

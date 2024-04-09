@@ -1,7 +1,8 @@
 // import { useFormik } from "formik";
-import { MouseEvent, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { axiosBase } from "../../api/axios";
+import { toastHelper } from "../../util/toast";
 // import { AdminAuthSchema } from "../../../validationSchemas/validationSchema";
 
 // import { adminAuth } from "../../../services/apis/adminApi/adminApi";
@@ -24,8 +25,10 @@ const AdminLogin = () => {
       console.log(res);
       if (res.status == 200) {
         localStorage.setItem("token", res.data.token);
+        toastHelper("success", res.data.message);
         Navigate("/admin");
       } else {
+        toastHelper("error",res.response.data.message);
         console.log(res.response.data.message);
       }
     });

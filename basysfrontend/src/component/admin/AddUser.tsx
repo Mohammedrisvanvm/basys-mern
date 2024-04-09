@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosBase } from "../../api/axios";
+import { toastHelper } from "../../util/toast";
 
 const AddUser = () => {
   const [firstName, setfirstName] = useState<string>("");
@@ -28,13 +29,15 @@ const AddUser = () => {
         })
         .then((res: any) => {
           console.log(res.status);
-          if (res.status == 200) {
+          if (res.status == 201) {
+            toastHelper("success", res.data.message);
             Navigate("/admin");
           }
           console.log(res);
         });
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      toastHelper("success", error.message);
     }
   };
   return (
